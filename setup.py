@@ -1,13 +1,13 @@
 from distutils.core import setup
 setup(
-  name = 'fanfiction',
-  packages = ['fanfiction'],
+  name = 'fanfiction-fixed',
+  packages = ['fanfiction-fixed'],
   version = '0.1.1',
   description = 'Scraper for http://fanfiction.net',
   author = 'Smitha Milli',
   author_email = 'smitha.milli@gmail.com',
-  url = 'https://github.com/smilli/fanfiction',
-  download_url = 'https://github.com/smilli/fanfiction/tarball/0.1.1',
+  url = 'https://github.com/slugking/fanfiction-fixed',
+  download_url = 'https://github.com/slugking/fanfiction-fixed/tarball/0.1.1',
   keywords = ['nlp'],
   classifiers = [],
   install_requires = [
