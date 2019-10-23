@@ -1,1 +1,1 @@
-from fanfiction.scraper import Scraper
+from fanfiction-fixed.scraper import Scraper
