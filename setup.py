@@ -1,7 +1,7 @@
 from distutils.core import setup
 setup(
-  name = 'fanfiction-fixed',
-  packages = ['fanfiction-fixed'],
+  name = 'fanfictionfixed',
+  packages = ['fanfictionfixed'],
   version = '0.1.1',
   description = 'Scraper for http://fanfiction.net',
   author = 'Smitha Milli',
