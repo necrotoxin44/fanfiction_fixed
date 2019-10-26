@@ -15,15 +15,8 @@ class Scraper:
     def get_genres(self, genre_text):
         genres = genre_text.split('/')
         # Hurt/Comfort is annoying because of the '/'
-        corrected_genres = []
-        for genre in genres:
-            if genre == 'Hurt':
-                corrected_genres.append('Hurt/Comfort')
-            elif genre == 'Comfort':
-                continue
-            else:
-                corrected_genres.append(genre)
-        return corrected_genres
+        return ['Hurt/Comfort' if g == 'Hurt' else g for g in genres
+                if g != 'Comfort']
 
     def scrape_story_metadata(self, story_id):
         """
@@ -42,13 +35,14 @@ class Scraper:
             -num_favs
             -num_follows
             -num_words: total number of words in all chapters of the story
-            -rated: the story's rating.
+            -rated: the story's rating
+            -completed: whether the story is completed or not
         """
         url = '{0}/s/{1}'.format(self.base_url, story_id)
         result = requests.get(url)
         html = result.content
         soup = BeautifulSoup(html, self.parser)
-        if (soup.find(id='pre_story_links') != None):
+        if soup.find(id='pre_story_links'):
           pre_story_links = soup.find(id='pre_story_links').find_all('a')
           author_id = int(re.search(r"var userid = (.*);", str(soup)).groups()[0]);
           title = re.search(r"var title = (.*);", str(soup)).groups()[0];
@@ -95,8 +89,8 @@ class Scraper:
                       metadata['num_'+tag] = val
                   except:
                       metadata[tag] = val
-          if 'status' not in metadata:
-              metadata['status'] = 'Incomplete'
+          metadata['complete'] = 'status' in metadata
+          metadata.pop('status', None)
           return metadata
         return None
 
