@@ -11,6 +11,12 @@ class Scraper:
         self.base_url = 'http://fanfiction.net/'
         self.rate_limit = 1
         self.parser = "html.parser"
+        self.genres = [
+            'Adventure','Angst','Crime','Drama','Family','Fantasy',
+            'Friendship','General','Horror','Humor','Hurt/Comfort',
+            'Mystery','Parody','Poetry','Romance','Sci-Fi','Spiritual',
+            'Supernatural','Suspense','Tragedy','Western'
+        ]
 
     def get_genres(self, genre_text):
         genres = genre_text.split('/')
@@ -36,6 +42,7 @@ class Scraper:
             -num_follows
             -num_words: total number of words in all chapters of the story
             -rated: the story's rating
+            -characters: characters noted as being in the story
             -completed: whether the story is completed or not
         """
         url = '{0}/s/{1}'.format(self.base_url, story_id)
@@ -43,44 +50,50 @@ class Scraper:
         html = result.content
         soup = BeautifulSoup(html, self.parser)
         if soup.find(id='pre_story_links'):
-          pre_story_links = soup.find(id='pre_story_links').find_all('a')
           author_id = int(re.search(r"var userid = (.*);", str(soup)).groups()[0]);
           title = re.search(r"var title = (.*);", str(soup)).groups()[0];
           title = unquote_plus(title)[1:-1]
+          pre_story_links = soup.find(id='pre_story_links').find_all('a')
+          metadata = {
+            'id': story_id,
+            'author_id': author_id,
+            'title': title,
+          }
           metadata_div = soup.find(id='profile_top')
           times = metadata_div.find_all(attrs={'data-xutime':True})
+          if (len(times) == 1):
+              metadata['published'] = int(times[0]['data-xutime'])
+              metadata['updated'] = -1
+          else:
+              metadata['published'] = int(times[1]['data-xutime'])
+              metadata['updated'] = int(times[0]['data-xutime'])
+
           metadata_text = metadata_div.find(class_='xgray xcontrast_txt').text
           metadata_parts = metadata_text.split(' - ')
-          genres = self.get_genres(metadata_parts[2].strip())
-          metadata = {
-              'id': story_id,
-              #'canon_type': pre_story_links[0].text,
-              #'canon': pre_story_links[1].text,
-              'author_id': author_id,
-              'title': title,
-              #'updated': int(times[0]['data-xutime']),
-              #'published': int(times[1]['data-xutime']),
-              'lang': metadata_parts[1].strip(),
-              'genres': genres
-          }
+          keyed, unkeyed = [], []
+          for p in metadata_parts:
+              (keyed if ':' in p else unkeyed).append(p)
+          metadata['lang'] = unkeyed.pop(0).strip()
+          if unkeyed:
+              next = unkeyed.pop(0).strip()
+              genres = self.get_genres(next)
+              if genres[0] in ''.join(self.genres):
+                  metadata['genres'] = genres
+              else:
+                  unkeyed.insert(0, next)
+              if unkeyed:
+                  next = unkeyed.pop(0).strip()
+                  chars = [char.strip() for char in next.split(',')]
+                  metadata['characters'] = chars
           if (len(pre_story_links) == 1):
             metadata['canon'] = pre_story_links[0].text
             metadata['canon_type'] = "Crossover"
           else:
             metadata['canon'] = pre_story_links[1].text
             metadata['canon_type'] = pre_story_links[0].text
-          if (len(times) == 1):
-            metadata['published'] = int(times[0]['data-xutime'])
-            metadata['updated'] = -1
-          else:
-            metadata['published'] = int(times[1]['data-xutime'])
-            metadata['updated'] = int(times[0]['data-xutime'])
-          for parts in metadata_parts:
-              parts = parts.strip()
-              tag_and_val = parts.split(':')
-              if len(tag_and_val) != 2:
-                  continue
-              tag, val = tag_and_val
+          for part in keyed:
+              part = part.strip()
+              tag, val = part.split(':')
               tag = tag.strip().lower()
               if tag not in metadata:
                   val = val.strip()
