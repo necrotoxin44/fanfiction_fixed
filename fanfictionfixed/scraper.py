@@ -61,12 +61,9 @@ class Scraper:
 			}
 			metadata_div = soup.find(id='profile_top')
 			times = metadata_div.find_all(attrs={'data-xutime':True})
-			if (len(times) == 1):
-				metadata['published'] = int(times[0]['data-xutime'])
-				metadata['updated'] = -1
-			else:
-				metadata['published'] = int(times[1]['data-xutime'])
-				metadata['updated'] = int(times[0]['data-xutime'])
+			metadata['published'] = int(times.pop()['data-xutime'])
+			if times:
+				metadata['updated'] = int(times.pop()['data-xutime'])
 
 			metadata_text = metadata_div.find(class_='xgray xcontrast_txt').text
 			metadata_parts = metadata_text.split(' - ')
@@ -85,12 +82,11 @@ class Scraper:
 					next = unkeyed.pop(0).strip()
 					chars = [char.strip() for char in next.split(',')]
 					metadata['characters'] = chars
-			if (len(pre_story_links) == 1):
-				metadata['canon'] = pre_story_links[0].text
-				metadata['canon_type'] = "Crossover"
+			metadata['canon'] = pre_story_links.pop().text
+			if pre_story_links:
+				metadata['canon_type'] = pre_story_links.pop().text
 			else:
-				metadata['canon'] = pre_story_links[1].text
-				metadata['canon_type'] = pre_story_links[0].text
+				metadata['canon_type'] = 'Crossover'
 			for part in keyed:
 				part = part.strip()
 				tag, val = part.split(':')
