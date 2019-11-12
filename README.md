@@ -3,7 +3,9 @@ This repository contains scraping tools for [FanFiction.Net](http://fanfiction.n
 
 Smitha Milli and David Bamman, "Beyond Canonical Texts: A Computational Analysis of Fanfiction" EMNLP 2016.
 
-We have imposed a rate limit of a page per second in these tools in order to comply with the fanfiction.net terms of service:
+This was forked from and thenceforth improved upon.
+
+There is an imposed rate limit of a page per second in these tools in order to comply with the fanfiction.net terms of service:
 > E. You agree not to use or launch any automated system, including without limitation, "robots," "spiders," or "offline readers," that accesses the Website in a manner that  sends more request messages to the FanFiction.Net servers in a given period of time than a human can reasonably produce in the same period by using a conventional on-line web browser.
 
 If you want fanfiction from Archive of Our Own instead, check out [@radiolarian's Archive of Our Own scraper](https://github.com/radiolarian/AO3Scraper).
@@ -28,18 +30,20 @@ fanfictionfixed.Scraper.get_story_metadata(story_id)
 
   * **id** [int]: The id of the story
   * **canon_type** [str]: The type of canon
-  * **canon** [str]: The name of the canon
+  * **canon** [str]: The name of the canon(s)
   * **author_id** [int]: The user id of the author
   * **title** [int]: The title of the story
-  * **updated** [int]: The timestamp of the last time the story was updated
+  * **updated** [int]: The timestamp of the last time the story was updated. If never updated, will not be present
   * **published** [int]: The timestamp of when the story was originally published
   * **lang** [str]: The language the story is written in
-  * **genres** [list]: A list of the genres that the author categorized the story as
+  * **genres** [list]: A list of the genres that the author categorized the story as, if any, if none, then will not be present
   * **num_reviews** [int]
   * **num_favs** [int]
   * **num_follows** [int]
   * **num_words** [int]: Total number of words in all chapters of the story
   * **rated** [str]: The story's fiction rating. i.e. K, K+, T, M
+  * **characters** [str]: The listed characters
+  * **completed** [bool]: Whether the story has been marked as completed.
 
 ```
 fanfictionfixed.Scraper.scrape_story(story_id, keep_html=False)
