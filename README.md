@@ -11,16 +11,16 @@ If you want fanfiction from Archive of Our Own instead, check out [@radiolarian'
 # Usage
 
 ## Install
-    pip install fanfiction
+    pip install git+https://github.com/necrotoxin44/fanfictionfixed
 
 ## Example
-    from fanfiction import Scraper
+    from fanfictionfixed import Scraper
     scraper = Scraper()
     metadata = scraper.scrape_story_metadata(STORY_ID)
 
 # Documentation
 ```
-fanfiction.Scraper.get_story_metadata(story_id)
+fanfictionfixed.Scraper.get_story_metadata(story_id)
 ```
   Returns a dictionary with the metadata for the story.
 
@@ -42,21 +42,21 @@ fanfiction.Scraper.get_story_metadata(story_id)
   * **rated** [str]: The story's fiction rating. i.e. K, K+, T, M
 
 ```
-fanfiction.Scraper.scrape_story(story_id, keep_html=False)
+fanfictionfixed.Scraper.scrape_story(story_id, keep_html=False)
 ```
 
   Returns a dictionary with the metadata, chapters, and reviews of the story. The dictionary has the same attributes as the metadata attributes listed above plus the additional attributes:
 
   * **chapters** [dict]: A dictionary mapping from the chapter id (where the chapter id for the n-th chapter of the story is n) to the text of the chapter. The text is either stripped of HTML if keep_html is False or with the HTML intact if keep_html is True.
-  * **reviews** [dict]: A dictionary mapping from the chapter id to a list of review dictionaries (see ```fanfiction.Scraper.scrape_reviews_for_chapter(story_id, chapter_id)```)
+  * **reviews** [dict]: A dictionary mapping from the chapter id to a list of review dictionaries (see ```fanfictionfixed.Scraper.scrape_reviews_for_chapter(story_id, chapter_id)```)
 
 ```
-fanfiction.Scraper.scrape_chapter(story_id, chapter_id, keep_html=False)
+fanfictionfixed.Scraper.scrape_chapter(story_id, chapter_id, keep_html=False)
 ```
   Returns the text of the chapter either stripped of the HTML if keep_html is False or with the HTML intact if keep_html is True.
 
 ```
-fanfiction.Scraper.scrape_reviews_for_chapter(story_id, chapter_id)
+fanfictionfixed.Scraper.scrape_reviews_for_chapter(story_id, chapter_id)
 ```
   Returns a list of review dictionaries. Each review dictionary has the following attributes:
 
